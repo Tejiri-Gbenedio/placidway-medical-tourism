@@ -5,11 +5,11 @@ import { MessageSquare, Phone } from "lucide-react";
 import { CONTACT_PHONE, QUOTE_URL } from "@/config/brand";
 
 interface PlacidWayHeaderProps {
-  onOpenChat: () => void;
+  onOpenChat?: () => void;
   mode: "mock" | "live";
 }
 
-export function PlacidWayHeader({ onOpenChat, mode }: PlacidWayHeaderProps) {
+export function PlacidWayHeader({ mode }: PlacidWayHeaderProps) {
   return (
     <header className="w-full sticky top-0 z-40 bg-surface/95 backdrop-blur-md border-b border-outline shadow-xs">
       {/* Top assessment notice banner */}
@@ -88,22 +88,13 @@ export function PlacidWayHeader({ onOpenChat, mode }: PlacidWayHeaderProps) {
           </a>
         </nav>
 
-        {/* Action triggers */}
+        {/* Action trigger */}
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onOpenChat}
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-peach-100 hover:bg-peach-200 text-coral border border-coral-border font-bold text-sm shadow-soft transition-all active:scale-95"
-          >
-            <MessageSquare className="w-4 h-4 text-coral" />
-            <span>Chat with Alice</span>
-          </button>
-
           <a
             href={QUOTE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center px-4 py-2 rounded-pill bg-[#1E2E48] hover:bg-[#152033] text-white text-sm font-semibold shadow-soft transition-all active:scale-95"
+            className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-[#1E2E48] hover:bg-[#152033] text-white text-xs sm:text-sm font-semibold whitespace-nowrap shadow-soft transition-all active:scale-95"
           >
             Get Free Quote
           </a>

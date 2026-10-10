@@ -1,29 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { Search, MapPin, MessageSquare, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
+import { QUOTE_URL } from "@/config/brand";
 
 interface PlacidWayHeroProps {
-  onOpenChatWithQuery: (query?: string) => void;
+  onOpenChatWithQuery?: (query?: string) => void;
 }
 
-export function PlacidWayHero({ onOpenChatWithQuery }: PlacidWayHeroProps) {
-  const [treatmentQuery, setTreatmentQuery] = useState("");
-  const [destinationQuery, setDestinationQuery] = useState("");
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (treatmentQuery.trim()) {
-      onOpenChatWithQuery(
-        `What can you tell me about ${treatmentQuery} in ${destinationQuery || "Mexico"}?`
-      );
-    } else {
-      onOpenChatWithQuery("How much does lung cancer treatment cost at ITC in Tijuana?");
-    }
-  };
-
+export function PlacidWayHero(_props: PlacidWayHeroProps) {
   return (
-    <section className="relative flex min-h-[640px] md:min-h-[720px] items-center overflow-hidden bg-[#1E2E48] text-white py-16 md:py-24 px-4 sm:px-6">
+    <section className="relative flex min-h-[580px] md:min-h-[660px] items-center overflow-hidden bg-[#1E2E48] text-white py-20 md:py-28 px-4 sm:px-6">
       {/* Background Video Loop with clear visibility */}
       <video
         autoPlay
@@ -58,61 +44,25 @@ export function PlacidWayHero({ onOpenChatWithQuery }: PlacidWayHeroProps) {
           Because every patient deserves a way forward. When local healthcare says &ldquo;no,&rdquo; &ldquo;not covered,&rdquo; or &ldquo;the wait is too long,&rdquo; you are not out of options. We help you find trusted, affordable care abroad.
         </p>
 
-        {/* Search Engine Filter Card with larger, legible typography */}
-        <div className="max-w-3xl mx-auto mt-10 bg-white/95 backdrop-blur-md rounded-2xl shadow-floating p-4 sm:p-5 text-ink border border-white/20">
-          <form onSubmit={handleSearch} className="flex flex-col md:flex-row items-center gap-3">
-            {/* Treatment input */}
-            <div className="flex-1 w-full flex items-center gap-3 px-4 py-3.5 rounded-xl bg-page border border-outline focus-within:border-coral focus-within:ring-2 focus-within:ring-coral/20 transition-all">
-              <Search className="w-5 h-5 text-coral shrink-0" />
-              <input
-                type="text"
-                value={treatmentQuery}
-                onChange={(e) => setTreatmentQuery(e.target.value)}
-                placeholder="What kind of care are you looking for? (e.g. Alternative Cancer, Dental)..."
-                className="w-full bg-transparent text-sm sm:text-base text-ink placeholder:text-ink-muted focus:outline-none"
-              />
-            </div>
-
-            {/* Destination input */}
-            <div className="w-full md:w-60 flex items-center gap-3 px-4 py-3.5 rounded-xl bg-page border border-outline focus-within:border-coral focus-within:ring-2 focus-within:ring-coral/20 transition-all">
-              <MapPin className="w-5 h-5 text-coral shrink-0" />
-              <input
-                type="text"
-                value={destinationQuery}
-                onChange={(e) => setDestinationQuery(e.target.value)}
-                placeholder="Where? (e.g. Tijuana, Mexico)..."
-                className="w-full bg-transparent text-sm sm:text-base text-ink placeholder:text-ink-muted focus:outline-none"
-              />
-            </div>
-
-            {/* Action buttons */}
-            <div className="w-full md:w-auto flex items-center gap-2.5">
-              <button
-                type="submit"
-                className="flex-1 md:flex-none px-6 py-3.5 rounded-xl bg-[#1E2E48] hover:bg-[#152033] text-white text-sm font-bold shadow-soft transition-all active:scale-95 whitespace-nowrap"
-              >
-                Explore Options
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  onOpenChatWithQuery(
-                    treatmentQuery
-                      ? `Tell me about ${treatmentQuery} in ${destinationQuery || "Mexico"}`
-                      : undefined
-                  )
-                }
-                className="flex-1 md:flex-none px-5 py-3.5 rounded-xl bg-coral hover:bg-coral-hover text-white text-sm font-bold shadow-soft transition-all active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap"
-              >
-                <MessageSquare className="w-4 h-4" />
-                <span>AI Assistant</span>
-              </button>
-            </div>
-          </form>
+        {/* Clean Direct Actions */}
+        <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
+          <a
+            href={QUOTE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-3.5 rounded-xl bg-coral hover:bg-coral-hover text-white text-sm font-bold shadow-soft transition-all active:scale-95 whitespace-nowrap"
+          >
+            Request a Free Quote
+          </a>
+          <a
+            href="#treatments"
+            className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white text-sm font-semibold transition-all active:scale-95 whitespace-nowrap"
+          >
+            Browse Treatments
+          </a>
         </div>
 
-        {/* Trust proofs below search bar */}
+        {/* Trust proofs */}
         <div className="pt-8 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs sm:text-sm text-white/90 font-medium">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-coral shrink-0" />

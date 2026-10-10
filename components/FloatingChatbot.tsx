@@ -118,7 +118,7 @@ export function FloatingChatbot({
           ) : (
             <>
               <MessageSquare className="w-5 h-5 text-coral" />
-              <span className="text-sm font-bold">Ask a clinic question</span>
+              <span className="text-sm font-bold">Chat with Alice</span>
             </>
           )}
         </button>
