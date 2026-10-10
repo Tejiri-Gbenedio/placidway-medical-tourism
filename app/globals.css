@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #FFF8F3;
+  --surface: #FFFFFF;
+  --peach: #FFE9DF;
+  --accent: #E8574D;
+  --accent-dark: #C9433A;
+  --text: #2B2B33;
+  --muted: #6B6B76;
+  --border: #F0D9CF;
+}
+
+@layer base {
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
