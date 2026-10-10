@@ -1,99 +1,64 @@
-"use client";
+import { QUOTE_URL } from "@/config/brand";
 
-import { ShieldCheck, TrendingDown, Users } from "lucide-react";
-
-const PRICE_COMPARISONS = [
-  { procedure: "Alternative Cancer Protocol (3 Wk)", usPrice: "$85,000+", abroadPrice: "$18,995", destination: "Tijuana, Mexico", savings: "78%" },
-  { procedure: "All-on-4 Full Dental Implants", usPrice: "$28,000", abroadPrice: "$8,500", destination: "Mexico / Costa Rica", savings: "70%" },
-  { procedure: "Gastric Sleeve Bariatric Surgery", usPrice: "$16,500", abroadPrice: "$4,200", destination: "Tijuana, Mexico", savings: "74%" },
-  { procedure: "Knee Replacement (Single)", usPrice: "$35,000", abroadPrice: "$9,800", destination: "Mexico / Spain", savings: "72%" },
+const QUESTIONS = [
+  {
+    title: "What does the price include?",
+    detail:
+      "Ask for an itemized quote covering consultations, tests, treatment, medication, and follow-up. Check travel and accommodation separately.",
+  },
+  {
+    title: "Who will provide my care?",
+    detail:
+      "Check the clinician’s qualifications, the facility’s current accreditation, and the evidence for your proposed treatment.",
+  },
+  {
+    title: "What happens after I go home?",
+    detail:
+      "Discuss recovery time, complications, and follow-up with both your treating clinic and your doctor at home before booking.",
+  },
 ];
 
 export function TrustSection() {
   return (
-    <section id="pricing" className="py-16 px-4 sm:px-6 max-w-6xl mx-auto w-full">
-      <div className="bg-[#1E2E48] rounded-3xl p-6 sm:p-12 text-white shadow-card relative overflow-hidden">
-        <div className="relative z-10 space-y-10">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="text-xs font-bold text-coral uppercase tracking-wider">
-              Transparent Global Pricing
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-black tracking-tight">
-              Why Patients Choose PlacidWay
-            </h2>
-            <p className="text-sm sm:text-base text-white/85 leading-relaxed">
-              Real cost comparisons demonstrating the savings patients achieve without compromising clinical safety or quality of care.
-            </p>
-          </div>
+    <section id="pricing" className="bg-[#182B49] text-white py-20 px-4 sm:px-6 scroll-mt-24">
+      <div className="max-w-6xl mx-auto">
+        {/* Split top row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-baseline">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight">
+            A better decision starts<br />with better questions.
+          </h2>
+          <p className="text-base sm:text-lg text-white/80 leading-relaxed max-w-xl">
+            The headline price is only part of the picture. Compare the full care plan, not just the cost, and involve your own doctor before making travel arrangements.
+          </p>
+        </div>
 
-          {/* Price Comparison Table with larger typography */}
-          <div className="overflow-x-auto rounded-2xl border border-white/15 bg-white/5 backdrop-blur-md">
-            <table className="w-full text-left text-sm sm:text-base">
-              <thead className="bg-white/10 text-white text-xs sm:text-sm uppercase tracking-wider font-bold">
-                <tr>
-                  <th className="p-4 sm:p-5">Medical Procedure</th>
-                  <th className="p-4 sm:p-5">Average US Cost</th>
-                  <th className="p-4 sm:p-5 text-coral font-bold">PlacidWay Partner Clinics</th>
-                  <th className="p-4 sm:p-5 hidden sm:table-cell">Primary Destination</th>
-                  <th className="p-4 sm:p-5 text-right">Savings</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/10 text-white/90">
-                {PRICE_COMPARISONS.map((row, i) => (
-                  <tr key={i} className="hover:bg-white/5 transition-colors">
-                    <td className="p-4 sm:p-5 font-semibold text-white">{row.procedure}</td>
-                    <td className="p-4 sm:p-5 text-white/60 line-through">{row.usPrice}</td>
-                    <td className="p-4 sm:p-5 font-bold text-coral">{row.abroadPrice}</td>
-                    <td className="p-4 sm:p-5 hidden sm:table-cell text-white/80">{row.destination}</td>
-                    <td className="p-4 sm:p-5 text-right">
-                      <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold bg-green-500/20 text-green-300 border border-green-500/30">
-                        {row.savings}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Trust Value Pillars */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pt-4 text-center sm:text-left">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-coral/20 border border-coral flex items-center justify-center shrink-0 text-coral">
-                <ShieldCheck className="w-6 h-6" />
-              </div>
-              <div>
-                <h4 className="font-bold text-base text-white">Vetted & Certified Clinics</h4>
-                <p className="text-sm text-white/75 mt-1.5 leading-relaxed">
-                  Every provider meets strict international hygiene, accreditation, and doctor credential checks.
-                </p>
-              </div>
+        {/* 3 Question Columns */}
+        <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-10 border-t border-white/20 pt-10">
+          {QUESTIONS.map((q) => (
+            <div key={q.title}>
+              <h3 className="text-lg font-bold text-white tracking-tight">
+                {q.title}
+              </h3>
+              <p className="mt-3 text-sm text-white/75 leading-relaxed">
+                {q.detail}
+              </p>
             </div>
+          ))}
+        </div>
 
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-coral/20 border border-coral flex items-center justify-center shrink-0 text-coral">
-                <TrendingDown className="w-6 h-6" />
-              </div>
-              <div>
-                <h4 className="font-bold text-base text-white">No Hidden Markups</h4>
-                <p className="text-sm text-white/75 mt-1.5 leading-relaxed">
-                  Transparent itemized quotes provided upfront so you know exactly what your package covers.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-coral/20 border border-coral flex items-center justify-center shrink-0 text-coral">
-                <Users className="w-6 h-6" />
-              </div>
-              <div>
-                <h4 className="font-bold text-base text-white">Dedicated Patient Coordinators</h4>
-                <p className="text-sm text-white/75 mt-1.5 leading-relaxed">
-                  Free one-on-one assistance with records review, clinic admissions, and travel logistics.
-                </p>
-              </div>
-            </div>
-          </div>
+        {/* Bottom CTA row */}
+        <div className="mt-14 pt-8 border-t border-white/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <p className="text-lg sm:text-xl font-medium text-white/90">
+            Ready to ask about your options?
+          </p>
+          <a
+            href={QUOTE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-3.5 rounded-xl bg-white text-[#182B49] hover:bg-slate-100 text-sm font-bold shadow-soft transition-all active:scale-95 whitespace-nowrap"
+          >
+            Request a quote on PlacidWay
+          </a>
         </div>
       </div>
     </section>

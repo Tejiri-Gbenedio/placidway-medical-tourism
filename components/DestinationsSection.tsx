@@ -3,7 +3,7 @@
 import { MapPin, MessageSquare } from "lucide-react";
 
 interface DestinationsSectionProps {
-  onSelectDestination: (dest: string) => void;
+  onSelectDestination?: (dest: string) => void;
 }
 
 const DESTINATIONS = [
@@ -86,17 +86,6 @@ export function DestinationsSection({ onSelectDestination }: DestinationsSection
                 </span>
               </div>
             </div>
-
-            <button
-              type="button"
-              onClick={() =>
-                onSelectDestination(`What medical treatments are available in ${dest.country}?`)
-              }
-              className="mt-5 w-full py-2.5 px-4 rounded-xl bg-page hover:bg-peach-100 text-ink text-xs sm:text-sm font-semibold border border-outline hover:border-coral-border flex items-center justify-center gap-2 transition-all active:scale-98"
-            >
-              <MessageSquare className="w-4 h-4 text-coral" />
-              <span>Ask AI About {dest.country}</span>
-            </button>
           </div>
         ))}
       </div>

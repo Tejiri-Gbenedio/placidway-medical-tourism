@@ -5,10 +5,10 @@ import { KNOWLEDGE_SOURCES } from "@/config/sources";
 import { QUOTE_URL } from "@/config/brand";
 
 interface ClinicSpotlightProps {
-  onAskAboutITC: (prompt: string) => void;
+  onAskAboutITC?: (prompt: string) => void;
 }
 
-export function ClinicSpotlight({ onAskAboutITC }: ClinicSpotlightProps) {
+export function ClinicSpotlight(_props: ClinicSpotlightProps) {
   return (
     <section id="itc-spotlight" className="py-16 px-4 sm:px-6 max-w-6xl mx-auto w-full">
       <div className="rounded-3xl bg-surface border-2 border-coral/30 shadow-card p-6 sm:p-10 relative overflow-hidden">
@@ -67,36 +67,15 @@ export function ClinicSpotlight({ onAskAboutITC }: ClinicSpotlightProps) {
               </div>
             </div>
 
-            {/* Quick action triggers */}
-            <div className="flex flex-wrap items-center gap-3 pt-3">
-              <button
-                type="button"
-                onClick={() =>
-                  onAskAboutITC("How much does lung cancer treatment cost at ITC in Tijuana?")
-                }
-                className="px-5 py-3 rounded-pill bg-coral hover:bg-coral-hover text-white text-sm font-bold shadow-soft transition-all active:scale-95 flex items-center gap-2"
-              >
-                <MessageSquare className="w-4 h-4" />
-                <span>Ask Alice About ITC Pricing</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  onAskAboutITC("What is included in the out-patient package?")
-                }
-                className="px-5 py-3 rounded-pill bg-white hover:bg-peach-100 text-ink border border-outline text-sm font-semibold shadow-xs transition-all active:scale-95"
-              >
-                <span>View Package Inclusions</span>
-              </button>
-
+            {/* Clean Direct Action */}
+            <div className="flex flex-wrap items-center gap-3 pt-4">
               <a
                 href={QUOTE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm font-bold text-coral hover:text-coral-hover underline underline-offset-4 ml-1"
+                className="px-6 py-3.5 rounded-xl bg-coral hover:bg-coral-hover text-white text-sm font-bold shadow-soft transition-all active:scale-95 inline-flex items-center gap-2"
               >
-                <span>Request Free Quote</span>
+                <span>Request Free Consultation & Quote</span>
                 <ExternalLink className="w-4 h-4" />
               </a>
             </div>
