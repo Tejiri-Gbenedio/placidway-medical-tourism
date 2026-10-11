@@ -32,6 +32,13 @@ export async function proxyChatToN8N(payload: ChatRequest): Promise<ChatResponse
     }
 
     const data = await res.json();
+
+    if (data && data.error) {
+      const err = new Error(data.error.message || "Upstream service error");
+      (err as unknown as { code?: string }).code = data.error.code || "upstream_error";
+      throw err;
+    }
+
     const parsed = ChatResponseSchema.safeParse(data);
 
     if (!parsed.success) {

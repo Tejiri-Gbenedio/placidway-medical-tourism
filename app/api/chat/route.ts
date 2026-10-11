@@ -85,6 +85,8 @@ export async function POST(req: NextRequest) {
     const statusCode = isTimeout ? 504 : 502;
     const userMessage = isTimeout
       ? "The assistant took too long to reply. Please click Retry."
+      : error instanceof Error && error.message
+      ? error.message
       : "The assistant encountered a temporary connection issue. Please click Retry.";
 
     const errorBody: ApiError = {
