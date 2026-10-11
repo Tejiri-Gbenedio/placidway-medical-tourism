@@ -43,7 +43,7 @@ export function MessageBubble({
         href.startsWith("mailto:");
 
       if (!isAllowed) {
-        return <span className="underline decoration-dotted">{children}</span>;
+        return <span className="underline decoration-dotted break-all">{children}</span>;
       }
 
       return (
@@ -51,7 +51,7 @@ export function MessageBubble({
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-coral hover:text-coral-hover font-semibold underline underline-offset-2 transition-colors"
+          className="text-coral hover:text-coral-hover font-medium underline underline-offset-2 break-all [overflow-wrap:anywhere] transition-colors"
           {...props}
         >
           {children}
@@ -59,16 +59,16 @@ export function MessageBubble({
       );
     },
     p: ({ children }: { children?: React.ReactNode }) => (
-      <p className="mb-2.5 last:mb-0 leading-relaxed text-sm sm:text-base">{children}</p>
+      <p className="mb-2.5 last:mb-0 leading-relaxed text-sm sm:text-base break-words [overflow-wrap:anywhere]">{children}</p>
     ),
     ul: ({ children }: { children?: React.ReactNode }) => (
-      <ul className="list-disc pl-5 mb-2.5 last:mb-0 space-y-1.5 text-sm sm:text-base">{children}</ul>
+      <ul className="list-disc pl-5 mb-2.5 last:mb-0 space-y-1.5 text-sm sm:text-base break-words [overflow-wrap:anywhere]">{children}</ul>
     ),
     ol: ({ children }: { children?: React.ReactNode }) => (
-      <ol className="list-decimal pl-5 mb-2.5 last:mb-0 space-y-1.5 text-sm sm:text-base">{children}</ol>
+      <ol className="list-decimal pl-5 mb-2.5 last:mb-0 space-y-1.5 text-sm sm:text-base break-words [overflow-wrap:anywhere]">{children}</ol>
     ),
     li: ({ children }: { children?: React.ReactNode }) => (
-      <li className="leading-relaxed">{children}</li>
+      <li className="leading-relaxed break-words [overflow-wrap:anywhere]">{children}</li>
     ),
     strong: ({ children }: { children?: React.ReactNode }) => (
       <strong className="font-bold text-[#1E2E48]">{children}</strong>
@@ -78,7 +78,7 @@ export function MessageBubble({
   if (isUser) {
     return (
       <div className="flex justify-end items-end gap-2.5 animate-fadeIn">
-        <div className="max-w-[85%] sm:max-w-[78%] px-4 py-3 rounded-bubble rounded-br-sm bg-coral text-white shadow-soft">
+        <div className="max-w-[85%] sm:max-w-[78%] px-4 py-3 rounded-2xl rounded-br-sm bg-coral text-white shadow-xs break-words [overflow-wrap:anywhere]">
           <p className="text-sm sm:text-base whitespace-pre-wrap leading-relaxed font-normal">
             {message.content}
           </p>
@@ -101,14 +101,14 @@ export function MessageBubble({
           <AlertCircle className="w-4 h-4" />
         </div>
 
-        <div className="px-4 py-3.5 rounded-bubble rounded-tl-sm bg-red-50/80 border border-red-200 text-red-900 shadow-soft">
+        <div className="px-4 py-3.5 rounded-2xl rounded-tl-sm bg-red-50/80 border border-red-200 text-red-900 shadow-xs break-words [overflow-wrap:anywhere]">
           <p className="text-sm leading-relaxed">{message.content}</p>
 
           {onRetry && (
             <button
               type="button"
               onClick={() => onRetry(message.rawInput)}
-              className="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-pill bg-white hover:bg-red-100 text-red-700 text-xs font-semibold border border-red-200 transition-all shadow-xs active:scale-95"
+              className="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white hover:bg-red-100 text-red-700 text-xs font-semibold border border-red-200 transition-all shadow-xs active:scale-95"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Retry question</span>
@@ -121,19 +121,19 @@ export function MessageBubble({
 
   // Assistant bubble
   return (
-    <div className="flex items-start gap-3 max-w-[92%] sm:max-w-[85%] animate-fadeIn">
-      {/* Bot Avatar */}
-      <div className="w-9 h-9 rounded-full bg-peach-100 border border-coral-border flex items-center justify-center shrink-0 shadow-xs mt-1">
+    <div className="flex items-start gap-3 max-w-[94%] sm:max-w-[88%] animate-fadeIn overflow-hidden">
+      {/* Bot Avatar with real Alice portrait */}
+      <div className="w-9 h-9 rounded-full overflow-hidden border border-amber-200/80 shadow-xs shrink-0 mt-0.5">
         <Image
-          src="/logo.svg"
+          src="/images/alice.jpg"
           alt="Alice"
-          width={20}
-          height={20}
-          className="w-5 h-5"
+          width={36}
+          height={36}
+          className="w-full h-full object-cover object-top"
         />
       </div>
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
         {/* Medical disclaimer note if triggered and not yet shown this session */}
         {message.show_disclaimer && !hasShownDisclaimer && (
           <DisclaimerNote
@@ -144,10 +144,10 @@ export function MessageBubble({
         )}
 
         <div
-          className={`px-4 py-4 rounded-bubble rounded-tl-sm shadow-soft text-ink ${
+          className={`px-4 py-3.5 rounded-2xl rounded-tl-sm shadow-xs text-slate-800 break-words [overflow-wrap:anywhere] overflow-x-hidden max-w-full ${
             isCannotAnswer
-              ? "bg-page border-2 border-outline-subtle"
-              : "bg-peach-100 border border-outline"
+              ? "bg-[#FFF9F3] border border-[#F3E7D8]"
+              : "bg-[#FFFBF7] border border-[#F3E7D8]"
           }`}
         >
           {isCannotAnswer && (
@@ -157,7 +157,7 @@ export function MessageBubble({
             </div>
           )}
 
-          <div className="prose prose-sm sm:prose-base max-w-none text-ink leading-relaxed">
+          <div className="prose prose-sm sm:prose-base max-w-none text-slate-800 leading-relaxed break-words [overflow-wrap:anywhere] overflow-x-hidden">
             <ReactMarkdown
               rehypePlugins={[rehypeSanitize]}
               components={components}
@@ -169,35 +169,11 @@ export function MessageBubble({
           {/* Source attribution badges */}
           <SourceChips sources={message.sources} />
 
-          {/* Quote CTA Button */}
-          {message.show_quote_cta && <QuoteCTA />}
-
           {/* Lead form card if user asked for booking/consultation */}
           {message.show_lead_form && <LeadForm sessionId={sessionId} />}
-
-          {/* Suggested follow-up prompt chips */}
-          {message.suggested_followups && message.suggested_followups.length > 0 && (
-            <div className="mt-4 pt-3 border-t border-outline/60">
-              <span className="block text-xs font-bold text-ink-muted mb-2 uppercase tracking-wider">
-                Related Questions:
-              </span>
-              <div className="flex flex-wrap gap-2">
-                {message.suggested_followups.slice(0, 3).map((prompt, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => onFollowupClick?.(prompt)}
-                    className="text-left text-xs sm:text-sm px-3 py-1.5 rounded-pill bg-surface hover:bg-peach-200 text-ink border border-outline hover:border-coral-border active:scale-95 transition-all shadow-xs font-medium"
-                  >
-                    {prompt}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
-        <span className="text-xs text-ink-muted ml-2 mt-1.5 font-mono">
+        <span className="text-[11px] text-ink-muted ml-1 mt-1 font-mono">
           {message.timestamp}
         </span>
       </div>
