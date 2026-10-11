@@ -231,15 +231,6 @@ export function FloatingChatbot({
                 <Volume2 className="w-3.5 h-3.5 text-slate-400" />
                 <span>Talk Now</span>
               </button>
-              <a
-                href="https://www.placidway.com/request-info"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-1.5 py-1.5 text-slate-600 hover:text-slate-900 font-medium transition-colors"
-              >
-                <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                <span>Call Me</span>
-              </a>
             </div>
           </div>
 
