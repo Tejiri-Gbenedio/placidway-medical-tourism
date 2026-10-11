@@ -52,6 +52,8 @@ export function ChatPanel({
     setShowScrollBottom(!isAtBottom);
   };
 
+  const lastAssistantMessageRef = useRef<HTMLDivElement>(null);
+
   const scrollToBottom = (smooth = true) => {
     messagesEndRef.current?.scrollIntoView({
       behavior: smooth ? "smooth" : "auto",
@@ -59,10 +61,25 @@ export function ChatPanel({
   };
 
   useEffect(() => {
-    if (!showScrollBottom) {
-      scrollToBottom();
+    if (loading) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      return;
     }
-  }, [messages, loading, showScrollBottom]);
+
+    if (messages.length === 0) return;
+
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg && lastMsg.role === "assistant") {
+      setTimeout(() => {
+        lastAssistantMessageRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 50);
+    } else {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, loading]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -157,17 +174,28 @@ export function ChatPanel({
           </div>
         )}
 
-        {messages.map((msg) => (
-          <MessageBubble
-            key={msg.id}
-            message={msg}
-            sessionId={sessionId}
-            hasShownDisclaimer={hasShownDisclaimer}
-            onDisclaimerShown={() => setHasShownDisclaimer(true)}
-            onFollowupClick={onFollowupClick}
-            onRetry={onRetry}
-          />
-        ))}
+        {messages.map((msg, index) => {
+          const isLastAssistant =
+            msg.role === "assistant" &&
+            index === messages.map((m) => m.role).lastIndexOf("assistant");
+
+          return (
+            <div
+              key={msg.id}
+              ref={isLastAssistant ? lastAssistantMessageRef : null}
+              className="scroll-mt-3"
+            >
+              <MessageBubble
+                message={msg}
+                sessionId={sessionId}
+                hasShownDisclaimer={hasShownDisclaimer}
+                onDisclaimerShown={() => setHasShownDisclaimer(true)}
+                onFollowupClick={onFollowupClick}
+                onRetry={onRetry}
+              />
+            </div>
+          );
+        })}
 
         {loading && <TypingIndicator />}
         <div ref={messagesEndRef} />

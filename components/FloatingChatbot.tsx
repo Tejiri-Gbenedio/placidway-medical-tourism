@@ -58,6 +58,8 @@ export function FloatingChatbot({
     }
   }, [input]);
 
+  const lastAssistantMessageRef = useRef<HTMLDivElement>(null);
+
   const handleScroll = () => {
     if (!scrollContainerRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
@@ -71,10 +73,35 @@ export function FloatingChatbot({
     });
   };
 
+  // Focus textarea when chat is opened
   useEffect(() => {
     if (isOpen) {
-      scrollToBottom(false);
       setTimeout(() => textareaRef.current?.focus(), 150);
+    }
+  }, [isOpen]);
+
+  // Smart scrolling on new messages and loading changes
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (loading) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+
+    if (messages.length === 0) return;
+
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg && lastMsg.role === "assistant") {
+      // Scroll smoothly to the top of Alice's response so the user reads from the beginning!
+      setTimeout(() => {
+        lastAssistantMessageRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 50);
+    } else {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [isOpen, messages, loading]);
 
@@ -234,17 +261,28 @@ export function FloatingChatbot({
               </div>
             )}
 
-            {messages.map((msg) => (
-              <MessageBubble
-                key={msg.id}
-                message={msg}
-                sessionId={sessionId}
-                hasShownDisclaimer={hasShownDisclaimer}
-                onDisclaimerShown={() => setHasShownDisclaimer(true)}
-                onFollowupClick={onSendMessage}
-                onRetry={onRetry}
-              />
-            ))}
+            {messages.map((msg, index) => {
+              const isLastAssistant =
+                msg.role === "assistant" &&
+                index === messages.map((m) => m.role).lastIndexOf("assistant");
+
+              return (
+                <div
+                  key={msg.id}
+                  ref={isLastAssistant ? lastAssistantMessageRef : null}
+                  className="scroll-mt-3"
+                >
+                  <MessageBubble
+                    message={msg}
+                    sessionId={sessionId}
+                    hasShownDisclaimer={hasShownDisclaimer}
+                    onDisclaimerShown={() => setHasShownDisclaimer(true)}
+                    onFollowupClick={onSendMessage}
+                    onRetry={onRetry}
+                  />
+                </div>
+              );
+            })}
 
             {loading && <TypingIndicator />}
             <div ref={messagesEndRef} />
