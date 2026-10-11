@@ -52,13 +52,16 @@ export async function POST(req: NextRequest) {
 
     const errorBody: ApiError = {
       error: {
-        code: "upstream_error",
-        message: "Could not submit your consultation request. Please try again.",
+        code: (error as unknown as { code?: import("@/lib/types").ApiErrorCode }).code || "upstream_error",
+        message:
+          error instanceof Error && error.message
+            ? error.message
+            : "Could not submit your consultation request. Please try again.",
       },
     };
 
     return NextResponse.json(errorBody, {
-      status: 502,
+      status: 400,
       headers: { "X-Robots-Tag": "noindex, nofollow" },
     });
   }

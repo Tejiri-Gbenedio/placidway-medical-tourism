@@ -92,6 +92,13 @@ export async function proxyLeadToN8N(payload: LeadRequest): Promise<LeadResponse
       throw new Error(`Upstream returned HTTP ${res.status}`);
     }
 
+    const data = await res.json().catch(() => ({}));
+    if (data && data.error) {
+      const err = new Error(data.error.message || "Lead submission rejected");
+      (err as unknown as { code?: string }).code = data.error.code || "invalid_input";
+      throw err;
+    }
+
     return { ok: true };
   } catch (error: unknown) {
     clearTimeout(timeoutId);
