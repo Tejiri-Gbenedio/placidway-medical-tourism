@@ -6,10 +6,10 @@ import { CONTACT_PHONE, QUOTE_URL } from "@/config/brand";
 
 interface PlacidWayHeaderProps {
   onOpenChat?: () => void;
-  mode: "mock" | "live";
+  mode?: "mock" | "live";
 }
 
-export function PlacidWayHeader({ mode }: PlacidWayHeaderProps) {
+export function PlacidWayHeader({ mode = "live" }: PlacidWayHeaderProps) {
   return (
     <header className="w-full sticky top-0 z-40 bg-surface/95 backdrop-blur-md border-b border-outline shadow-xs">
       {/* Top assessment notice banner */}
@@ -24,12 +24,9 @@ export function PlacidWayHeader({ mode }: PlacidWayHeaderProps) {
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="bg-coral text-white text-xs px-2.5 py-0.5 rounded-full font-semibold">
-              {mode === "live" ? "Live n8n Backend" : "Verified Mock Engine"}
-            </span>
             <a
               href={`tel:${CONTACT_PHONE.replace(/[^0-9+]/g, "")}`}
-              className="hidden md:inline-flex items-center gap-1.5 text-white/85 hover:text-white transition-colors font-medium text-xs"
+              className="inline-flex items-center gap-1.5 text-white/85 hover:text-white transition-colors font-medium text-xs"
             >
               <Phone className="w-3.5 h-3.5 text-coral" />
               <span>{CONTACT_PHONE}</span>
