@@ -1,0 +1,318 @@
+{
+  "name": "PW Chatbot - Lead and Health API",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "alice-lead",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "f0a8f84e-a6a0-4aa6-b6a3-ab9f8b24d208",
+      "name": "Lead Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -720,
+        96
+      ],
+      "webhookId": "a8e1d118-7d42-46ba-a783-99e9cd9073f6"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\nconst body = input.body && typeof input.body === \"object\" ? input.body : input;\nfunction fail(code, message) { return [{ json: { action: \"error\", error: { code: code, message: message } } }]; }\nfunction clean(s) {\n  let out = \"\";\n  for (let i = 0; i < s.length; i++) { const k = s.charCodeAt(i); if (k >= 32 && k !== 127) out += s[i]; }\n  return out;\n}\nfunction isLetter(c) { return (c >= \"a\" && c <= \"z\") || (c >= \"A\" && c <= \"Z\") || c.charCodeAt(0) > 127; }\nfunction isDigit(c) { return c >= \"0\" && c <= \"9\"; }\nconst name = clean(typeof body.name === \"string\" ? body.name : \"\").trim();\nconst email = clean(typeof body.email === \"string\" ? body.email : \"\").trim().toLowerCase();\nconst sessionId = typeof body.sessionId === \"string\" ? body.sessionId.trim() : \"\";\nconst requestId = typeof body.requestId === \"string\" && body.requestId.length < 80 ? body.requestId : \"req-\" + Date.now();\n\nif (body.consent !== true) return fail(\"invalid_input\", \"Please tick the consent box so we can contact you.\");\nif (name.length < 2 || name.length > 80 || !isLetter(name[0])) return fail(\"invalid_input\", \"Please enter your name.\");\nfor (let i = 0; i < name.length; i++) {\n  const c = name[i];\n  if (!(isLetter(c) || c === \" \" || c === \"-\" || c === \"'\" || c === \".\")) return fail(\"invalid_input\", \"Please use letters only in your name.\");\n}\nfunction validEmail(e) {\n  if (e.length < 5 || e.length > 120) return false;\n  const at = e.indexOf(\"@\");\n  if (at < 1 || at !== e.lastIndexOf(\"@\")) return false;\n  const domain = e.slice(at + 1);\n  const dot = domain.lastIndexOf(\".\");\n  if (dot < 1 || dot > domain.length - 3) return false;\n  for (let i = 0; i < e.length; i++) {\n    const c = e[i];\n    if (!(isLetter(c) || isDigit(c) || c === \".\" || c === \"_\" || c === \"%\" || c === \"+\" || c === \"-\" || c === \"@\")) return false;\n  }\n  return true;\n}\nif (!validEmail(email)) return fail(\"invalid_input\", \"Please enter a valid email address.\");\nif (sessionId.length < 8 || sessionId.length > 80) return fail(\"invalid_input\", \"Invalid session.\");\n\nconst sd = $getWorkflowStaticData(\"global\");\nif (!sd.leadRl) sd.leadRl = {};\nconst now = Date.now();\nconst day = new Date(now).toISOString().slice(0, 10);\nif (sd.leadDay !== day) { sd.leadDay = day; sd.leadCount = 0; }\nsd.leadCount = (sd.leadCount || 0) + 1;\nif (sd.leadCount > 300) return fail(\"rate_limited\", \"Too many requests today. Please try again tomorrow.\");\nconst stamps = (sd.leadRl[sessionId] || []).filter(function (t) { return now - t < 3600000; });\nif (stamps.length >= 3) { sd.leadRl[sessionId] = stamps; return fail(\"rate_limited\", \"You have already submitted your details. We will be in touch.\"); }\nstamps.push(now);\nsd.leadRl[sessionId] = stamps;\nconst keys = Object.keys(sd.leadRl);\nif (keys.length > 500) { keys.forEach(function (k) { const a = sd.leadRl[k]; if (!a.length || now - a[a.length - 1] > 3600000) delete sd.leadRl[k]; }); }\n\nreturn [{ json: { action: \"ok\", lead: { name: name, email: email, sessionId: sessionId, requestId: requestId } } }];"
+      },
+      "id": "d51d121c-fe10-404b-9ea3-7b7a3a8503c7",
+      "name": "Validate Lead",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "ok",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c82aca89-8a5f-49df-9b50-ef57f85e6a54",
+      "name": "Valid lead?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -240,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "pw_leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $json.lead.name }}",
+            "email": "={{ $json.lead.email }}",
+            "consent": true,
+            "session_id": "={{ $json.lead.sessionId }}",
+            "request_id": "={{ $json.lead.requestId }}",
+            "source": "web-chat",
+            "submitted_at": "={{ $now.toISO() }}"
+          },
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "consent",
+              "displayName": "consent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "request_id",
+              "displayName": "request_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "submitted_at",
+              "displayName": "submitted_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "745b3a84-7e4d-4291-bde4-0034c3caf233",
+      "name": "Save Lead",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": true } }}",
+        "options": {}
+      },
+      "id": "4bc184a4-45c6-4a8a-b214-ca053cd81835",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"error\": $json.error } }}",
+        "options": {}
+      },
+      "id": "c372314b-42dc-42f4-bb7d-f53e287a88f4",
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "path": "alice-health",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "8eca2d44-8f8e-433b-9c10-e195c78617f6",
+      "name": "Health Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -720,
+        416
+      ],
+      "webhookId": "82777f6f-9aba-4600-ba65-8fa1c9ad518e"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"ok\", \"service\": \"alice-chat\", \"time\": $now.toISO() } }}",
+        "options": {}
+      },
+      "id": "8493ee25-5d13-4137-a902-952365447edf",
+      "name": "Respond Health",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -480,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Lead and health endpoints\n**/webhook/alice-lead** (POST): validates name, email and consent, rate-limits, saves to the `pw_leads` data table (Data tables tab). Stores no chat messages.\n**/webhook/alice-health** (GET): returns {status: ok}. Point UptimeRobot at it.\nPublish this workflow, then set the frontend env vars VITE_N8N_LEAD_WEBHOOK_URL and VITE_N8N_HEALTH_URL.",
+        "color": 4
+      },
+      "id": "aa8e274d-b121-43ee-8853-4296a058a7f3",
+      "name": "Sticky Note be9afb1c",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -976,
+        256
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Lead Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Lead": {
+      "main": [
+        [
+          {
+            "node": "Valid lead?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid lead?": {
+      "main": [
+        [
+          {
+            "node": "Save Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Lead": {
+      "main": [
+        [
+          {
+            "node": "Respond OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Health Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond Health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "9d8ffd90-e206-4617-a343-75bab4f1ca8c",
+  "meta": {
+    "instanceId": "ce12777ec72e0279805b6d53b81351c13648d129fd52f678d636b780171b9975"
+  },
+  "nodeGroups": [],
+  "id": "XZ17D9OLsIjmf5pe",
+  "tags": []
+}

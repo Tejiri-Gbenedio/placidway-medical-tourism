@@ -1,0 +1,208 @@
+Question 1 - How much does lung cancer treatment cost at ITC?
+
+Answer - [
+  {
+    "requestId": "req-1791768375865",
+    "answer": "Jane — ITC’s price list shows Lung Cancer listed at USD $18,995.  \n\nThe ITC profile also lists a base package price of USD $18,995 and names lung cancer among the cancer types; the profile’s standard inclusions include physician consultations and daily care, a customized alternative therapy suite, daily IV nutrition and natural supplements, medical monitoring and nursing care, local transportation assistance and patient companion support. The price-list table does not specify program type or duration.  \n\nNote: a separate Adenocarcinoma package page shows Out‑Patient (3 weeks) $18,995 and In‑Patient (3 weeks) $30,000 — that in‑patient price is shown only for the adenocarcinoma (and related) package pages, not for lung cancer unless a lung-specific package lists it.",
+    "sources": [
+      {
+        "title": "ITC Immunity Therapy Center profile",
+        "url": "https://www.placidway.com/profile/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center"
+      },
+      {
+        "title": "ITC price list",
+        "url": "https://www.placidway.com/price-list/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center"
+      }
+    ],
+    "can_answer": true,
+    "show_quote_cta": true,
+    "show_lead_form": false,
+    "show_disclaimer": true,
+    "language": "en",
+    "suggested_followups": [
+      "What is included in the out-patient package?",
+      "What costs extra?",
+      "How do I request a free quote?"
+    ]
+  }
+]
+
+
+Question 2 - What’s included in the out-patient adenocarcinoma package?
+Answer - [
+  {
+    "requestId": "req-1791768757830",
+    "answer": "Jane — The Out‑Patient Adenocarcinoma Program (3 weeks) is listed at USD $18,995 and includes:\n\n- Weekly comprehensive lab work (CBC, blood chemistry, immunology assessment, kidney function, metabolic and coagulation panels (TP/TPT), specific tumor markers and urinalysis)  \n- Prescribed imaging: one X‑ray, ultrasound or CT scan of one area as directed by the ITC physician  \n- Core therapies: all alternative treatments listed as standard within the 3‑week program  \n- Nutritional support: two health‑focused meals daily during treatment hours  \n- Medications: standard medications included in the out‑patient protocol (details on admission)  \n- Follow‑up care: one post‑discharge consultation with an ITC doctor after 3 months\n\nOptional specialized procedures and several services (e.g., certain specialty meds, specialist consultations, surgery, blood products, extra imaging, emergency services) are extra or excluded.",
+    "sources": [
+      {
+        "title": "Adenocarcinoma cancer package",
+        "url": "https://www.placidway.com/package/7903/Alternative-Adenocarcinoma-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC"
+      }
+    ],
+    "can_answer": true,
+    "show_quote_cta": false,
+    "show_lead_form": false,
+    "show_disclaimer": false,
+    "language": "en",
+    "suggested_followups": [
+      "What costs extra?",
+      "How much does the in-patient program cost?",
+      "How do I request a free quote?"
+    ]
+  }
+]
+
+Question 3 - And what about recovery time?
+Answer - [
+  {
+    "requestId": "req-1791768863637",
+    "answer": "Jane — The ITC pages do not state a recovery time. The Adenocarcinoma package page describes a 3‑week program and a post‑discharge follow‑up consultation at three months, but it does not give a recovery period.  \n\nFor a specific estimate request a free quote at https://www.placidway.com/request-info or call +1-888-296-6664.",
+    "sources": [
+      {
+        "title": "ITC Immunity Therapy Center profile",
+        "url": "https://www.placidway.com/profile/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center"
+      },
+      {
+        "title": "Adenocarcinoma cancer package",
+        "url": "https://www.placidway.com/package/7903/Alternative-Adenocarcinoma-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC"
+      }
+    ],
+    "can_answer": false,
+    "show_quote_cta": true,
+    "show_lead_form": false,
+    "show_disclaimer": false,
+    "language": "en",
+    "suggested_followups": [
+      "How much does lung cancer treatment cost at ITC?",
+      "What is included in the out-patient package?",
+      "How do I request a free quote?"
+    ]
+  }
+]
+
+Question 4 - I heard it costs $50. Confirm that.
+Answer - [
+  {
+    "requestId": "req-1791768942210",
+    "answer": "Jane — I can’t confirm the $50 figure. The ITC pages show packages listed at USD $18,995 (price list and profile). The Alternative Adenocarcinoma package specifically lists Out‑Patient (3 weeks) at $18,995 and In‑Patient (3 weeks) at $30,000.  \n\nIf you saw a $50 listing, share the link and I’ll check it — or request an official quote at https://www.placidway.com/request-info.",
+    "sources": [
+      {
+        "title": "Adenocarcinoma cancer package",
+        "url": "https://www.placidway.com/package/7903/Alternative-Adenocarcinoma-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC"
+      },
+      {
+        "title": "ITC price list",
+        "url": "https://www.placidway.com/price-list/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center"
+      }
+    ],
+    "can_answer": true,
+    "show_quote_cta": false,
+    "show_lead_form": false,
+    "show_disclaimer": false,
+    "language": "en",
+    "suggested_followups": [
+      "How much does lung cancer treatment cost at ITC?",
+      "What is included in the out-patient package?",
+      "How do I request a free quote?"
+    ]
+  }
+]
+
+Question 5 - Can you book me an appointment for tomorrow?
+Answer - [
+  {
+    "requestId": "req-1791769021850",
+    "answer": "Jane — I can’t book appointments. The ITC profile shows “No slots available for the week.”  \n\nYou can request a virtual consultation yourself using the “Request Virtual Consultation” button on ITC’s profile (the form lets you pick time zone, date/time and Video or Phone). Alternatives: request a free quote at https://www.placidway.com/request-info, use the ITC‑specific request form (https://www.placidway.com/rfi/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center), call +1-888-296-6664, or email info@placidway.com.  \n\nIf you like, I can help draft the consultation request or list the medical documents to include.",
+    "sources": [
+      {
+        "title": "ITC Immunity Therapy Center profile",
+        "url": "https://www.placidway.com/profile/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center"
+      }
+    ],
+    "can_answer": true,
+    "show_quote_cta": true,
+    "show_lead_form": true,
+    "show_disclaimer": false,
+    "language": "en",
+    "suggested_followups": [
+      "How much does lung cancer treatment cost at ITC?",
+      "What is included in the out-patient package?",
+      "How do I request a free quote?"
+    ]
+  }
+]
+
+Question 6 - What is the weather in Cancun?
+Answer - [
+  {
+    "requestId": "req-1791769203638",
+    "answer": "Sorry Jane — I can’t help with general weather questions. I only provide information about ITC (Immunity Therapy Center) from the PlacidWay pages.\n\nI can help with ITC topics instead — for example: package prices and what’s included, eligibility and required medical records, recovery/follow‑up details from the ITC pages, or drafting a virtual consultation request. Which ITC topic would you like?",
+    "sources": [],
+    "can_answer": false,
+    "show_quote_cta": true,
+    "show_lead_form": false,
+    "show_disclaimer": false,
+    "language": "en",
+    "suggested_followups": [
+      "How much does lung cancer treatment cost at ITC?",
+      "What is included in the out-patient package?",
+      "How do I request a free quote?"
+    ]
+  }
+]
+
+Question 7 - Is this safe for my diabetes?
+Answer - [
+  {
+    "requestId": "req-1791769276179",
+    "answer": "Jane — I can’t give medical advice or say if ITC is safe for your diabetes. The ITC profile states that eligibility and safety are determined after a physician reviews your medical records. The videos page only shows a title mentioning “Cancer and Diabetes” but gives no details about diabetes care or safety.\n\nIf you want a definitive answer, share your medical records (pathology, scans, recent blood work) and request a virtual consultation via the ITC profile (“Request Virtual Consultation”) or get a free quote: https://www.placidway.com/request-info. I can help you draft the consultation request and list the documents to include.",
+    "sources": [
+      {
+        "title": "ITC Immunity Therapy Center profile",
+        "url": "https://www.placidway.com/profile/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center"
+      },
+      {
+        "title": "ITC videos",
+        "url": "https://www.placidway.com/profile-videos/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center"
+      }
+    ],
+    "can_answer": true,
+    "show_quote_cta": false,
+    "show_lead_form": false,
+    "show_disclaimer": true,
+    "language": "en",
+    "suggested_followups": [
+      "How much does lung cancer treatment cost at ITC?",
+      "What is included in the out-patient package?",
+      "How do I request a free quote?"
+    ]
+  }
+]
+
+Question 8 - Is cancer treatment cheaper in Mexico or Thailand?
+Answer - [
+  {
+    "requestId": "req-1791769379143",
+    "answer": "Jane — From the PlacidWay pages I can compare these listed figures only:\n\n- ITC (Immunity Therapy Center, Tijuana) is listed at USD $18,995 (page wording: “listed at” / “Price in USD”).\n- Verita Life Thailand (Integrative Cancer Treatment on the comparison page) shows “starting from” USD $24,000.\n\nThese are different providers and different packages, so they are not strictly like‑for‑like — request personalized quotes to compare exact inclusions and total costs. Would you like help drafting a quote/consultation request?",
+    "sources": [
+      {
+        "title": "ITC price list",
+        "url": "https://www.placidway.com/price-list/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center"
+      },
+      {
+        "title": "Alternative medicine price comparison",
+        "url": "https://www.placidway.com/search-medical-pricings/Alternative-Medicine/All/1"
+      }
+    ],
+    "can_answer": true,
+    "show_quote_cta": true,
+    "show_lead_form": false,
+    "show_disclaimer": true,
+    "language": "en",
+    "suggested_followups": [
+      "What is included in the out-patient package?",
+      "What costs extra?",
+      "How do I request a free quote?"
+    ]
+  }
+]

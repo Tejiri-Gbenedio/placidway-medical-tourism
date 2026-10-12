@@ -1,0 +1,68 @@
+{
+  "name": "PW Chatbot - Error Handler (Telegram)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "03c1485d-8c64-470c-9903-557e31863b5a",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "1189989575",
+        "text": "=🚨 PW Chatbot error\nWorkflow: {{ $json.workflow.name }}\nFailed node: {{ $json.execution.lastNodeExecuted }}\nError: {{ String($json.execution.error.message).slice(0, 500) }}\nExecution: {{ $json.execution.url }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "c3bcb71d-1759-4428-902a-fb74805cf78f",
+      "name": "Send Telegram Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        0
+      ],
+      "webhookId": "c7622cd4-5542-4e4c-a2e7-4b177918572a",
+      "credentials": {
+        "telegramApi": {
+          "id": "tqnpldRiNn3DtKMH",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "a6f73dd3-87d4-47b5-9bbf-4ba46955bb13",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ce12777ec72e0279805b6d53b81351c13648d129fd52f678d636b780171b9975"
+  },
+  "nodeGroups": [],
+  "id": "eWch3TGzgaFpqOwt",
+  "tags": []
+}

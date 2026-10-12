@@ -1,0 +1,736 @@
+{
+  "name": "PW Chatbot - Knowledge Base Refresh",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "8c8ba6e0-a583-4769-95bb-d74a0c4c230b",
+      "name": "Run refresh",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1",
+              "name": "assistantName",
+              "value": "chatbot",
+              "type": "string"
+            },
+            {
+              "id": "c2",
+              "name": "assistantHost",
+              "value": "https://prod-1-data.ke.pinecone.io",
+              "type": "string"
+            },
+            {
+              "id": "c3",
+              "name": "apiVersion",
+              "value": "2025-10",
+              "type": "string"
+            },
+            {
+              "id": "c4",
+              "name": "userAgent",
+              "value": "PWAssessmentBot/1.0 (AI automation assessment; contact: plotteafiles@gmail.com)",
+              "type": "string"
+            },
+            {
+              "id": "c5",
+              "name": "deleteLegacyFiles",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "33919853-eef2-42ac-a555-fa94762adbc0",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 3
+            }
+          ]
+        }
+      },
+      "id": "1ac6612e-c9ad-4a80-8003-167edbcd3a1a",
+      "name": "Weekly refresh",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -464,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "alice-refresh",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "2a4b1b92-b9b2-450d-803f-2ad338d93c36",
+      "name": "Refresh Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -464,
+        576
+      ],
+      "webhookId": "041a0bf1-577c-4f02-9785-1beda74acfbe",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "QEfLrwuPkGlvfJZH",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.placidway.com/robots.txt",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "={{ $json.userAgent }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "cca8217f-662f-42c4-a5ff-9a3a6d7c9976",
+      "name": "Fetch robots.txt",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        0,
+        416
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const NL = String.fromCharCode(10);\nconst robotsItem = $input.first().json;\nconst robots = typeof robotsItem.data === \"string\" ? robotsItem.data : \"\";\nconst PAGES = [\n  { key: \"price-list\", label: \"ITC price list\", page_type: \"price_list\", url: \"https://www.placidway.com/price-list/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center\" },\n  { key: \"profile\", label: \"ITC profile\", page_type: \"profile\", url: \"https://www.placidway.com/profile/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center\" },\n  { key: \"pkg-adenocarcinoma\", label: \"Adenocarcinoma package\", page_type: \"package\", url: \"https://www.placidway.com/package/7903/Alternative-Adenocarcinoma-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC\" },\n  { key: \"pkg-adrenal\", label: \"Adrenal package\", page_type: \"package\", url: \"https://www.placidway.com/package/7902/Alternative-Adrenal-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC\" },\n  { key: \"pkg-anal\", label: \"Anal package\", page_type: \"package\", url: \"https://www.placidway.com/package/7901/Alternative-Anal-Cancer-Treatment-Package-in-Tijuana-Mexico-by-ITC\" },\n  { key: \"videos\", label: \"ITC videos\", page_type: \"videos\", url: \"https://www.placidway.com/profile-videos/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center\" },\n  { key: \"comparison\", label: \"Comparison page\", page_type: \"comparison\", url: \"https://www.placidway.com/search-medical-pricings/Alternative-Medicine/All/1\" }\n];\nlet applies = false;\nconst disallow = [];\nconst allow = [];\nrobots.split(NL).forEach(function (ln) {\n  const s = ln.split(\"#\")[0].trim();\n  const i = s.indexOf(\":\");\n  if (i < 0) return;\n  const k = s.slice(0, i).trim().toLowerCase();\n  const v = s.slice(i + 1).trim();\n  if (k === \"user-agent\") applies = v === \"*\";\n  else if (applies && k === \"disallow\" && v) disallow.push(v);\n  else if (applies && k === \"allow\" && v) allow.push(v);\n});\nfunction longest(rules, path) {\n  let best = -1;\n  rules.forEach(function (r) { if (path.indexOf(r) === 0 && r.length > best) best = r.length; });\n  return best;\n}\nconst allowed = [];\nconst blocked = [];\nPAGES.forEach(function (p) {\n  const path = p.url.slice(p.url.indexOf(\"/\", 8));\n  if (longest(disallow, path) > longest(allow, path)) blocked.push(p.key);\n  else allowed.push(p);\n});\nif (!allowed.length) throw new Error(\"robots.txt disallows all source pages; refresh aborted.\");\nconst robotsStatus = robots ? \"checked\" : \"unavailable (treated as allowed)\";\nreturn allowed.map(function (p) { return { json: Object.assign({}, p, { blockedPages: blocked, robotsStatus: robotsStatus }) }; });"
+      },
+      "id": "ba1f8a3f-528b-486d-8e5a-d9fb786de042",
+      "name": "Page List and Robots Check",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "={{ $(\"Config\").first().json.userAgent }}"
+            },
+            {
+              "name": "Accept",
+              "value": "text/html,application/xhtml+xml"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 1100
+            }
+          },
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "2b3d06a5-ff92-438c-9495-9383389023ff",
+      "name": "Fetch Page",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        432,
+        416
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const NL = String.fromCharCode(10);\nconst WS = \"[ \" + String.fromCharCode(9, 10, 13, 160) + \"]+\";\nconst ARROW = \" \" + String.fromCharCode(8250) + \" \";\nfunction rx(p, f) { return new RegExp(p, f); }\nfunction squash(s) { return s.replace(rx(WS, \"g\"), \" \").trim(); }\nconst pages = $(\"Page List and Robots Check\").all().map(function (i) { return i.json; });\nconst fetched = $input.all().map(function (i) { return i.json; });\nconst scrapedAt = new Date().toISOString().slice(0, 10);\n\nconst ENT = [[\"&nbsp;\", \" \"], [\"&amp;\", \"&\"], [\"&quot;\", '\"'], [\"&#39;\", \"'\"], [\"&#x27;\", \"'\"], [\"&apos;\", \"'\"], [\"&lt;\", \"<\"], [\"&gt;\", \">\"], [\"&rsquo;\", \"'\"], [\"&lsquo;\", \"'\"], [\"&rdquo;\", '\"'], [\"&ldquo;\", '\"'], [\"&ndash;\", \"-\"], [\"&mdash;\", \"-\"], [\"&hellip;\", \"...\"]];\nfunction decode(s) { ENT.forEach(function (e) { s = s.split(e[0]).join(e[1]); }); return s; }\nfunction stripTags(s) { return s.replace(rx(\"<[^>]+>\", \"g\"), \" \"); }\n\nfunction toLines(html) {\n  [\"script\", \"style\", \"noscript\", \"svg\", \"iframe\", \"template\", \"select\", \"button\", \"nav\", \"footer\"].forEach(function (t) {\n    html = html.replace(rx(\"<\" + t + \"[^>]*>[^]*?</\" + t + \">\", \"gi\"), \" \");\n  });\n  html = html.replace(rx(\"<!--[^]*?-->\", \"g\"), \" \");\n  html = html.replace(rx(\"<tr[^>]*>([^]*?)</tr>\", \"gi\"), function (m, inner) {\n    const cells = [];\n    inner.replace(rx(\"<t[dh][^>]*>([^]*?)</t[dh]>\", \"gi\"), function (mm, c) { cells.push(squash(decode(stripTags(c)))); return \"\"; });\n    return \"<p>\" + cells.filter(Boolean).join(\" | \") + \"</p>\";\n  });\n  for (let n = 1; n <= 6; n++) {\n    html = html.replace(rx(\"<h\" + n + \"[^>]*>([^]*?)</h\" + n + \">\", \"gi\"), function (m, c) {\n      return NL + NL + \"#\".repeat(n) + \" \" + squash(decode(stripTags(c))) + NL;\n    });\n  }\n  html = html.replace(rx(\"<li[^>]*>\", \"gi\"), NL + \"- \");\n  html = html.replace(rx(\"</(p|div|section|ul|ol|li|article|tr|table|dd|dt)>\", \"gi\"), NL);\n  html = html.replace(rx(\"<br[^>]*>\", \"gi\"), NL);\n  html = decode(stripTags(html));\n  return html.split(NL).map(squash).filter(function (l) { return l.length > 0; });\n}\nfunction headingLevel(l) {\n  let n = 0;\n  while (l[n] === \"#\") n++;\n  return n > 0 && n <= 6 && l[n] === \" \" ? n : 0;\n}\nconst EXCLUDE = [\"review\", \"testimonial\", \"patient stor\", \"related\", \"explore\", \"you may also\", \"similar\", \"top medical center\", \"top package\", \"unlock the best\", \"transformative\", \"trending\", \"article\", \"podcast\", \"frequently searched\", \"top procedures\", \"request your free quote\", \"download\", \"confirm your virtual\", \"request a video call\", \"real families\", \"families say\"];\nconst TRUNCATE = [\"accreditations\", \"about placidway\", \"follow us\", \"newsletter\", \"subscribe\", \"our network\"];\nfunction matches(list, text) {\n  const t = text.toLowerCase();\n  return list.some(function (k) { return t.indexOf(k) > -1; });\n}\nfunction commas(d) {\n  let o = \"\";\n  for (let i = 0; i < d.length; i++) { if (i > 0 && (d.length - i) % 3 === 0) o += \",\"; o += d[i]; }\n  return o;\n}\nfunction normPrices(s) {\n  s = s.replace(rx(\"[$] ?([0-9]{4,})\", \"g\"), function (m, d) { return \"$\" + commas(d); });\n  s = s.replace(rx(\"([0-9]{4,}) ?USD\", \"g\"), function (m, d) { return \"USD $\" + commas(d); });\n  return s;\n}\nfunction words(s) { return s.split(\" \").filter(Boolean).length; }\nfunction slug(s) {\n  let o = \"\";\n  const l = s.toLowerCase();\n  for (let i = 0; i < l.length && o.length < 40; i++) {\n    const c = l[i];\n    o += (c >= \"a\" && c <= \"z\") || (c >= \"0\" && c <= \"9\") ? c : \"-\";\n  }\n  return o.split(\"-\").filter(Boolean).join(\"-\");\n}\nfunction splitBody(lines) {\n  const parts = [];\n  let cur = [];\n  let w = 0;\n  lines.forEach(function (l) {\n    const lw = words(l);\n    if (w + lw > 250 && cur.length) { parts.push(cur.join(NL)); cur = []; w = 0; }\n    cur.push(l);\n    w += lw;\n  });\n  if (cur.length) parts.push(cur.join(NL));\n  return parts;\n}\nfunction hash(s) {\n  let h = 2166136261;\n  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }\n  return h.toString(16);\n}\nconst OUTCOME = [\"worked\", \"miracle\", \"remission\", \"survivor\", \"survive\", \"survival\", \"beat\", \"beating\", \"cured\", \"cancer-free\", \"cancer free\", \"no evidence\", \"success\", \"overcame\", \"journey\", \"recovered\", \"healed\", \"patient says\", \"patient story\", \"real patient\", \"reviews\"];\nconst VIDEO_STOP = [\"i agree to the terms\", \"take a look at these\", \"price starting from\", \"accreditations\", \"we collaborate with\", \"a real patient story\"];\nconst VIDEO_DENY = [\"publish date\", \"modified date\", \"medically reviewed\", \"read more\", \"share your\", \"request a consultation\", \"contact itc\", \"about itc\", \"founded by\"];\n\nconst chunks = [];\nconst report = [];\nconst usedIds = {};\nfunction pushChunk(p, pageTitle, section, type, bodyText, tag) {\n  let id = p.key + \"--\" + (tag || slug(section) || \"section\");\n  if (usedIds[id]) { usedIds[id] += 1; id = id + \"-\" + usedIds[id]; } else usedIds[id] = 1;\n  chunks.push({ id: id, url: p.url, title: pageTitle, page_type: p.page_type, section: section, chunk_type: type, text: \"[\" + p.label + ARROW + section + \"] \" + bodyText });\n}\n\npages.forEach(function (p, idx) {\n  const f = fetched[idx] || {};\n  const html = typeof f.data === \"string\" ? f.data : \"\";\n  const tm = html.match(rx(\"<title[^>]*>([^<]*)</title>\", \"i\"));\n  const pageTitle = tm ? squash(decode(tm[1])) : p.label;\n  const before = chunks.length;\n  let status = \"ok\";\n  let reason = \"\";\n  let pageText = \"\";\n  if (html.length < 3000) {\n    status = \"failed\";\n    reason = \"empty or blocked response\";\n  } else {\n    const lines = toLines(html);\n    const start = lines.findIndex(function (l) { return l.indexOf(\"# \") === 0; });\n    if (start < 0) {\n      status = \"failed\";\n      reason = \"no main heading found\";\n    } else if (p.key === \"videos\") {\n      let end = lines.length;\n      for (let i = start + 1; i < lines.length; i++) {\n        if (matches(VIDEO_STOP, lines[i])) { end = i; break; }\n      }\n      const seen = {};\n      const titles = [];\n      lines.slice(start + 1, end).forEach(function (l) {\n        let t = l;\n        while (t[0] === \"#\" || t[0] === \"-\" || t[0] === \" \") t = t.slice(1);\n        if (t.length < 25 || t.length > 220 || seen[t]) return;\n        if (matches(OUTCOME, t) || matches(VIDEO_DENY, t)) return;\n        seen[t] = true;\n        titles.push(t);\n      });\n      for (let i = 0; i < titles.length; i += 12) {\n        const grp = titles.slice(i, i + 12);\n        pushChunk(p, pageTitle, \"Video titles \" + (Math.floor(i / 12) + 1), \"video_titles\", \"Titles only (the page gives no descriptions or transcripts): \" + grp.join(\"; \"), \"video-titles-\" + (Math.floor(i / 12) + 1));\n        pageText += grp.join(\" \");\n      }\n      if (!titles.length) { status = \"failed\"; reason = \"no video titles found\"; }\n    } else {\n      const sections = [];\n      let cur = { heading: \"Overview\", body: [] };\n      let skipLevel = 0;\n      for (let i = start + 1; i < lines.length; i++) {\n        const l = lines[i];\n        const lv = headingLevel(l);\n        if (lv > 0) {\n          const text = l.slice(lv + 1);\n          if (matches(TRUNCATE, text)) break;\n          if (skipLevel > 0 && lv > skipLevel) continue;\n          skipLevel = 0;\n          if (cur && cur.body.length) sections.push(cur);\n          if (matches(EXCLUDE, text)) { skipLevel = lv; cur = null; } else cur = { heading: text, body: [] };\n        } else if (cur && skipLevel === 0) {\n          cur.body.push(l);\n        }\n      }\n      if (cur && cur.body.length) sections.push(cur);\n      sections.forEach(function (sec) {\n        const body = sec.body.map(normPrices).filter(function (l) { return l.length > 2; });\n        if (words(body.join(\" \")) < 8) return;\n        const parts = splitBody(body);\n        parts.forEach(function (part, k) {\n          pushChunk(p, pageTitle, sec.heading, \"primary\", part, slug(sec.heading) + (parts.length > 1 ? \"-\" + (k + 1) : \"\"));\n          pageText += part;\n        });\n      });\n      if (chunks.length === before) { status = \"failed\"; reason = \"no content chunks produced\"; }\n    }\n  }\n  report.push({ key: p.key, url: p.url, status: status, reason: reason, chunks: chunks.length - before, words: words(pageText), hash: hash(pageText) });\n});\n\nconst PROFILE = \"https://www.placidway.com/profile/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center\";\nconst statics = [\n  { id: \"static--contact-and-quote\", section: \"Contact and free quote\", type: \"contact\", text: \"To request a free quote or more information, use the PlacidWay free quote form at https://www.placidway.com/request-info or the ITC-specific quote page at https://www.placidway.com/rfi/5/Alternative-Cancer-Treatment-by-ITC-Immunity-Therapy-Center. Call toll free +1-888-296-6664. Email info@placidway.com.\" },\n  { id: \"static--accreditation-note\", section: \"Accreditation logos on the page\", type: \"note\", text: \"The PlacidWay footer banner shows accreditation logos (JCI, ISO, COFEPRIS and others) for organizations PlacidWay collaborates with. This banner is PlacidWay-wide and does not say that ITC holds JCI, ISO or any of these accreditations. The only ITC-specific regulatory statement on the profile page is that the center is approved by COFEPRIS.\" },\n  { id: \"static--patient-stories-summary\", section: \"Patient stories and reviews (summary only)\", type: \"patient_story_summary\", text: \"The pages include patient stories, reviews and video titles describing individual patient experiences. These are personal accounts, not clinical data, and this knowledge base does not repeat individual outcomes. The pages do not provide success rates, survival statistics or clinical trial results.\" }\n];\nstatics.forEach(function (s) {\n  chunks.push({ id: s.id, url: PROFILE, title: \"ITC Immunity Therapy Center profile\", page_type: \"profile\", section: s.section, chunk_type: s.type, text: \"[ITC profile\" + ARROW + s.section + \"] \" + s.text });\n});\n\nreturn [{ json: { scrapedAt: scrapedAt, pages: report, chunks: chunks, failed: report.filter(function (r) { return r.status !== \"ok\"; }).map(function (r) { return r.key + \": \" + r.reason; }) } }];"
+      },
+      "id": "1bc7a587-682d-4b4b-aa0e-4d9898c26a32",
+      "name": "Extract and Chunk",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $(\"Config\").first().json.assistantHost }}/assistant/files/{{ $(\"Config\").first().json.assistantName }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Pinecone-Api-Version",
+              "value": "={{ $(\"Config\").first().json.apiVersion }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "3aa2132f-0ac3-443d-ad5a-e9808e2797b2",
+      "name": "List Existing Files",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        880,
+        416
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "QEfLrwuPkGlvfJZH",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const NL = String.fromCharCode(10);\nconst ex = $(\"Extract and Chunk\").first().json;\nconst listed = $input.first().json;\nconst files = Array.isArray(listed.files) ? listed.files : [];\nconst autos = files.filter(function (f) { return f.metadata && f.metadata.kind === \"pw-kb-auto\"; });\nautos.sort(function (a, b) { return String(b.created_on || \"\").localeCompare(String(a.created_on || \"\")); });\nconst prev = autos.length ? autos[0] : null;\nconst prevHashes = {};\nif (prev && Array.isArray(prev.metadata.page_hashes)) {\n  prev.metadata.page_hashes.forEach(function (s) { const i = s.indexOf(\":\"); if (i > 0) prevHashes[s.slice(0, i)] = s.slice(i + 1); });\n}\nconst changed = [];\nconst unchanged = [];\nconst added = [];\nex.pages.forEach(function (p) {\n  if (p.status !== \"ok\") return;\n  if (!prev || prevHashes[p.key] === undefined) added.push(p.key);\n  else if (prevHashes[p.key] !== p.hash) changed.push(p.key);\n  else unchanged.push(p.key);\n});\nconst failed = ex.failed;\nconst safe = failed.length === 0 && ex.chunks.length >= 25;\nconst stamp = new Date().toISOString();\nconst header = \"# ITC Immunity Therapy Center: Chatbot Knowledge Base (auto-generated)\" + NL + NL + \"Scraped \" + stamp + \" from the 7 shared PlacidWay pages only. Each chunk starts with a line beginning with '## [CHUNK]'.\" + NL + NL;\nconst blocks = ex.chunks.map(function (c) {\n  return \"## [CHUNK] \" + c.id + NL + \"url: \" + c.url + NL + \"title: \" + c.title + NL + \"page_type: \" + c.page_type + NL + \"section: \" + c.section + NL + \"chunk_type: \" + c.chunk_type + NL + \"page_date: \" + ex.scrapedAt + NL + \"page_date_kind: scraped\" + NL + NL + c.text;\n});\nconst kbText = header + blocks.join(NL + NL) + NL;\nconst fileName = \"kb-auto-\" + stamp.slice(0, 16).split(\":\").join(\"\").split(\"-\").join(\"\") + \".md\";\nconst meta = { kind: \"pw-kb-auto\", refreshed_at: stamp, chunk_count: ex.chunks.length, page_hashes: ex.pages.filter(function (p) { return p.status === \"ok\"; }).map(function (p) { return p.key + \":\" + p.hash; }) };\nreturn [{ json: { safe: safe, kbText: kbText, fileName: fileName, metadataJson: JSON.stringify(meta), changed: changed, unchanged: unchanged, added: added, failed: failed, chunkCount: ex.chunks.length, previousFile: prev ? prev.name : null, existingFiles: files.map(function (f) { return f.name + \" (\" + f.status + \")\"; }) } }];"
+      },
+      "id": "ff5ed488-723a-4ed6-ba00-c5025d361ea9",
+      "name": "Plan Refresh",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.safe }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "81ed0dc7-048a-435a-a7eb-09d7882763a4",
+      "name": "Safe to upload?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1312,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "kbText",
+        "options": {
+          "fileName": "={{ $json.fileName }}"
+        }
+      },
+      "id": "190277fa-867c-4f73-80b1-98dff8f166e2",
+      "name": "Make KB File",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1536,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $(\"Config\").first().json.assistantHost }}/assistant/files/{{ $(\"Config\").first().json.assistantName }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Pinecone-Api-Version",
+              "value": "={{ $(\"Config\").first().json.apiVersion }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "09236384-a46d-418c-8037-3de08e14dabf",
+      "name": "Upload KB File",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1760,
+        320
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "QEfLrwuPkGlvfJZH",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "id": "e62c8f2e-14c1-456b-8e26-1e517db19bd5",
+      "name": "Wait for processing",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1968,
+        320
+      ],
+      "webhookId": "c72796ab-4fbf-4047-882d-b7d7de376776"
+    },
+    {
+      "parameters": {
+        "url": "={{ $(\"Config\").first().json.assistantHost }}/assistant/files/{{ $(\"Config\").first().json.assistantName }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Pinecone-Api-Version",
+              "value": "={{ $(\"Config\").first().json.apiVersion }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "782f2382-13c0-45fe-b954-316f6c301e45",
+      "name": "List Files After Upload",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2192,
+        320
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "QEfLrwuPkGlvfJZH",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $(\"Config\").first().json;\nconst plan = $(\"Plan Refresh\").first().json;\nconst up = $(\"Upload KB File\").first().json;\nconst listed = $input.first().json;\nconst files = Array.isArray(listed.files) ? listed.files : [];\nconst newId = up && up.id ? up.id : \"\";\nconst mine = files.find(function (f) { return f.id === newId; });\nconst status = mine ? mine.status : \"unknown\";\nconst ready = status === \"Available\";\nconst deleteIds = [];\nconst legacy = [];\nfiles.forEach(function (f) {\n  if (f.id === newId) return;\n  const kind = f.metadata && f.metadata.kind;\n  if (kind === \"pw-kb-auto\") deleteIds.push(f.id);\n  else if (cfg.deleteLegacyFiles === true) deleteIds.push(f.id);\n  else legacy.push(f.name);\n});\nreturn [{ json: { newFile: (up && up.name) || plan.fileName, newFileId: newId, status: status, ready: ready, replacedFileIds: ready ? deleteIds : [], legacyFilesKept: legacy } }];"
+      },
+      "id": "568b21a5-f976-4e71-bd47-9581007ab61d",
+      "name": "Finalize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2416,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ex = $(\"Extract and Chunk\").first().json;\nconst plan = $(\"Plan Refresh\").first().json;\nconst robots = $(\"Page List and Robots Check\").first().json;\nlet fin = null;\ntry { fin = $(\"Finalize\").first().json; } catch (e) { fin = null; }\nlet note = \"\";\nif (!plan.safe) note = \"Upload skipped: not every page was extracted cleanly, so the existing knowledge base was left untouched.\";\nelse if (fin && !fin.ready) note = \"New file uploaded but still processing; old auto-generated files will be cleaned up on the next refresh.\";\nelse if (fin) note = \"Knowledge base refreshed.\";\nreturn [{ json: {\n  action: fin ? \"uploaded\" : \"skipped\",\n  note: note,\n  refreshedAt: new Date().toISOString(),\n  chunkCount: plan.chunkCount,\n  pages: ex.pages.map(function (p) { return { key: p.key, status: p.status, reason: p.reason, chunks: p.chunks, words: p.words }; }),\n  changedPages: plan.changed,\n  newPages: plan.added,\n  unchangedPages: plan.unchanged,\n  failedPages: plan.failed,\n  blockedByRobots: robots.blockedPages,\n  robotsTxt: robots.robotsStatus,\n  file: fin ? { name: fin.newFile, id: fin.newFileId, status: fin.status } : null,\n  legacyFilesKept: fin ? fin.legacyFilesKept : plan.existingFiles,\n  replacedFileIds: fin ? fin.replacedFileIds : []\n} }];"
+      },
+      "id": "253cbf38-31d3-4326-b666-2dbfb17a2f24",
+      "name": "Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c008894e-871e-4871-a6ac-1f52e00863c9",
+      "name": "Respond to Refresh",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2848,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "replacedFileIds",
+        "options": {
+          "destinationFieldName": "fileId"
+        }
+      },
+      "id": "60837555-a0ac-43b3-b154-e30d9cb7a7ed",
+      "name": "Split Old Files",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        3072,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "={{ $(\"Config\").first().json.assistantHost }}/assistant/files/{{ $(\"Config\").first().json.assistantName }}/{{ $json.fileId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Pinecone-Api-Version",
+              "value": "={{ $(\"Config\").first().json.apiVersion }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "6d216fd7-84b3-4a23-b17b-99f49f0facc9",
+      "name": "Delete Old Files",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        3296,
+        416
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "QEfLrwuPkGlvfJZH",
+          "name": "Header Auth account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Setup\n1. **Config**: replace YOUR_EMAIL in `userAgent` (the crawler identifies itself to PlacidWay). Check `assistantName` and host.\n2. Attach your Pinecone Header Auth credential (name `Api-Key`) to the 4 Pinecone nodes: List Existing Files, Upload KB File, List Files After Upload, Delete Old Files.\n3. **Refresh Webhook**: create a Header Auth credential (e.g. name `x-refresh-key`, any secret value).\n4. Click **Run refresh** to test. Publish to enable the weekly schedule and the webhook.\n5. Old manually uploaded files are never deleted unless `deleteLegacyFiles` is true.",
+        "height": 368,
+        "width": 352,
+        "color": 4
+      },
+      "id": "83297507-cdcd-44a2-a672-7b2dfd1b061a",
+      "name": "Sticky Note 07ca0547",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Run refresh": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Fetch robots.txt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekly refresh": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refresh Webhook": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch robots.txt": {
+      "main": [
+        [
+          {
+            "node": "Page List and Robots Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Page List and Robots Check": {
+      "main": [
+        [
+          {
+            "node": "Fetch Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Page": {
+      "main": [
+        [
+          {
+            "node": "Extract and Chunk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract and Chunk": {
+      "main": [
+        [
+          {
+            "node": "List Existing Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Existing Files": {
+      "main": [
+        [
+          {
+            "node": "Plan Refresh",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan Refresh": {
+      "main": [
+        [
+          {
+            "node": "Safe to upload?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Safe to upload?": {
+      "main": [
+        [
+          {
+            "node": "Make KB File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make KB File": {
+      "main": [
+        [
+          {
+            "node": "Upload KB File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload KB File": {
+      "main": [
+        [
+          {
+            "node": "Wait for processing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for processing": {
+      "main": [
+        [
+          {
+            "node": "List Files After Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Files After Upload": {
+      "main": [
+        [
+          {
+            "node": "Finalize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finalize": {
+      "main": [
+        [
+          {
+            "node": "Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summary": {
+      "main": [
+        [
+          {
+            "node": "Respond to Refresh",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Refresh": {
+      "main": [
+        [
+          {
+            "node": "Split Old Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Old Files": {
+      "main": [
+        [
+          {
+            "node": "Delete Old Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "add36afe-6fc0-4396-8a15-38366913d6c0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ce12777ec72e0279805b6d53b81351c13648d129fd52f678d636b780171b9975"
+  },
+  "nodeGroups": [],
+  "id": "gDIG0BKbNyo5djkx",
+  "tags": []
+}
