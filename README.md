@@ -204,6 +204,6 @@ python test_all.py
 
 ### What We Would Improve with Another Week
 1. **Automated Diff & Semantic Drift Detection:** Enhance the crawler workflow (`PW Chatbot - Knowledge Base Refresh`) to perform AST-level diffs on scraped HTML. If clinic pricing or inclusions change by more than 15%, the workflow would flag an alert to a human healthcare editor before auto-publishing the revised vector chunks to Pinecone.
-2. **Direct CRM Integration (HubSpot / Salesforce Health Cloud):** Upgrade the `pw_leads` n8n workflow to enrich incoming lead profiles with IP geolocation, treatment intent tags, and estimated budget, then push them directly into PlacidWay's CRM with automated notification dispatch to patient advisors via Slack/Email.
+2. **Airtable CRM Integration:** Connect the `pw_leads` n8n workflow directly to an Airtable CRM base for cleaner lead collection, automated status tracking, and a more interactive, organized operational interface for patient care coordinators.
 3. **Hybrid Search (Dense Vector + BM25 Sparse Keyword Retrieval):** Implement hybrid retrieval in Pinecone. This would guarantee that exact numeric queries (e.g. *"$18,995"*, *"COFEPRIS"*, *"7903"*) receive 100% lexical precision alongside semantic embedding context.
-4. **Voice Interaction & Accessibility:** Integrate the browser Web Speech API / ElevenLabs conversational voice interface for visually impaired patients or mobile users seeking an audio consultation experience.
+
